@@ -57,7 +57,7 @@ function TaskManager({ session }: { session: Session }) {
     const filePath = `${file.name}-${Date.now()}`;
 
     const { error } = await supabase.storage
-      .from("tasks-images")
+      .from("tasks_images")
       .upload(filePath, file);
 
     if (error) {
