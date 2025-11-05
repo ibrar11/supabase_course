@@ -1,6 +1,6 @@
 import { useState,  } from "react";
 import type { FormEvent, ChangeEvent } from "react";
-import supabase from "../supabase-client";
+import supabase from "../supabase-client.ts";
 
 export const Auth = () => {
   const [isSignUp, setIsSignUp] = useState(false);
@@ -61,6 +61,7 @@ export const Auth = () => {
         </button>
       </form>
       <button
+        type="button"
         onClick={() => {
           setIsSignUp(!isSignUp);
         }}

@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import type { ChangeEvent } from "react"
-import supabase from "../supabase-client";
+import type { ChangeEvent, FormEvent } from "react"
+import supabase from "../supabase-client.ts";
 import type { Session } from "@supabase/supabase-js"
+import axios from "axios";
 
 interface Task {
   id: number;
@@ -72,7 +73,7 @@ function TaskManager({ session }: { session: Session }) {
     return data.publicUrl;
   };
 
-  const handleSubmit = async (e: any) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     let imageUrl: string | null = null;
@@ -100,8 +101,25 @@ function TaskManager({ session }: { session: Session }) {
     }
   };
 
+  const handleEdgeFunction = async () => {
+    try {
+      const res = await axios.get(
+        "http://localhost:54321/functions/v1/hello",
+        {
+          headers: {
+            Authorization: `Bearer ${session?.access_token}`,
+          },
+        }
+      );
+      console.log("resresresresresresresresresres",res)
+    } catch (err) {
+      console.log("errerrerrerr",err)
+    }
+  }
+
   useEffect(() => {
     fetchTasks();
+    handleEdgeFunction();
   }, []);
 
   useEffect(() => {
@@ -173,12 +191,14 @@ function TaskManager({ session }: { session: Session }) {
                   onChange={(e) => setNewDescription(e.target.value)}
                 />
                 <button
+                  type="button"
                   style={{ padding: "0.5rem 1rem", marginRight: "0.5rem" }}
                   onClick={() => updateTask(task.id)}
                 >
                   Edit
                 </button>
                 <button
+                  type="button"
                   style={{ padding: "0.5rem 1rem" }}
                   onClick={() => deleteTask(task.id)}
                 >
