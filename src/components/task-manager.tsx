@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import type { ChangeEvent, FormEvent } from "react"
 import supabase from "../supabase-client.ts";
 import type { Session } from "@supabase/supabase-js"
-import axios from "axios";
+import { backend } from "../utils/axiosInstance.ts"
 
 interface Task {
   id: number;
@@ -83,7 +83,7 @@ function TaskManager({ session }: { session: Session }) {
 
     const { error } = await supabase
       .from("tasks")
-      .insert({ ...newTask, email: session.user.email, image_url: imageUrl, user_id: session.user.id })
+      .insert({ ...newTask, email: session.user.email, image_url: imageUrl })
       .select()
       .single();
 
@@ -101,17 +101,18 @@ function TaskManager({ session }: { session: Session }) {
     }
   };
 
+  // just for practice purposes
   const handleEdgeFunction = async () => {
     try {
-      const res = await axios.get(
-        "http://localhost:54321/functions/v1/hello",
+      const res = await backend.get(
+        "functions/v1/hello",
         {
           headers: {
             Authorization: `Bearer ${session?.access_token}`,
           },
         }
       );
-      console.log("resresresresresresresresresres",res)
+      return res;
     } catch (err) {
       console.log("errerrerrerr",err)
     }
@@ -129,6 +130,7 @@ function TaskManager({ session }: { session: Session }) {
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "tasks" },
         (payload) => {
+          console.log("real time triggered.")
           const newTask = payload.new as Task;
           setTasks((prev) => [...prev, newTask]);
         }
@@ -136,6 +138,10 @@ function TaskManager({ session }: { session: Session }) {
       .subscribe((status) => {
         console.log("Subscription: ", status);
       });
+
+      return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   console.log(tasks);

@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import "./App.css";
-import { Auth } from "./components/auth";
-import TaskManager from "./components/task-manager";
-import supabase from "./supabase-client";
+import { Auth } from "./components/auth.tsx";
+import TaskManager from "./components/task-manager.tsx";
+import supabase from "./supabase-client.ts";
+import type { Session } from "@supabase/supabase-js";
 
 function App() {
-  const [session, setSession] = useState<any>(null);
+  const [session, setSession] = useState<Session | null>(null);
 
   const fetchSession = async () => {
     const currentSession = await supabase.auth.getSession();
@@ -35,7 +36,7 @@ function App() {
     <>
       {session ? (
         <>
-          <button onClick={logout}> Log Out</button>
+          <button type="button" onClick={logout}> Log Out</button>
           <TaskManager session={session} />
         </>
       ) : (
