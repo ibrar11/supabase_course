@@ -6,6 +6,7 @@ import supabase from "./supabase-client.ts";
 import type { Session } from "@supabase/supabase-js";
 
 function App() {
+  
   const [session, setSession] = useState<Session | null>(null);
 
   const fetchSession = async () => {
