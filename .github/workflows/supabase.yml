@@ -30,7 +30,12 @@ jobs:
       - name: Deploy all Supabase Edge Functions
         run: |
           for fn in $(ls supabase/functions); do
-            supabase functions deploy "$fn"
+            if [[ -d "supabase/functions/$fn" && "$fn" =~ ^[A-Za-z][A-Za-z0-9_-]*$ ]]; then
+              echo "🚀 Deploying function: $fn"
+              supabase functions deploy "$fn"
+            else
+              echo "⚠️ Skipping invalid or non-function entry: $fn"
+            fi
           done
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
